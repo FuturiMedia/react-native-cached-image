@@ -12,6 +12,9 @@ const flattenStyle = ReactNative.StyleSheet.flatten;
 
 const ImageCacheManager = require('./ImageCacheManager');
 
+const NetInfo = require('@react-native-community/netinfo');
+
+
 const {
     View,
     ImageBackground,
@@ -19,7 +22,7 @@ const {
     Platform,
     StyleSheet,
 } = ReactNative;
-const NetInfo = require('@react-native-community/netinfo');
+
 
 const styles = StyleSheet.create({
     image: {
