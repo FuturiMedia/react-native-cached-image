@@ -4,6 +4,7 @@ const _ = require('lodash');
 const React = require('react');
 const ReactNative = require('react-native');
 
+let removeEventListener = null;
 const PropTypes = require('prop-types');
 
 const ImageCacheManagerOptionsPropTypes = require('./ImageCacheManagerOptionsPropTypes');
@@ -82,21 +83,34 @@ class CachedImage extends React.Component {
 
     componentWillMount() {
         this._isMounted = true;
-        NetInfo.isConnected.addEventListener('connectionChange', this.handleConnectivityChange);
-        // initial
-        NetInfo.isConnected.fetch()
-            .then(isConnected => {
-                this.safeSetState({
-                    networkAvailable: isConnected
-                });
-            });
+        console.warn(NetInfo);
+        // NetInfo.isConnected.addEventListener('connectionChange', this.handleConnectivityChange);
+        // // initial
+        // NetInfo.isConnected.fetch()
+        //     .then(isConnected => {
+        //         this.safeSetState({
+        //             networkAvailable: isConnected
+        //         });
+        //     });
+
+      removeEventListener =  NetInfo.addEventListener( state => {
+            this.handleConnectivityChange(state.isConnected);
+        })
+        NetInfo.fetch().then(state => {
+            this.safeSetState({
+                            networkAvailable: state.isConnected
+                        }); 
+        })
 
         this.processSource(this.props.source);
     }
 
     componentWillUnmount() {
         this._isMounted = false;
-        NetInfo.isConnected.removeEventListener('connectionChange', this.handleConnectivityChange);
+        // NetInfo.isConnected.removeEventListener('connectionChange', this.handleConnectivityChange);
+        if(removeEventListener) {
+            removeEventListener();
+        }
     }
 
     componentWillReceiveProps(nextProps) {
